@@ -5,9 +5,32 @@ type Data = {
   name: string
 }
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  res.status(200).json({ name: 'John Doe' })
+
+
+  const data = await fetch(`https://excuses.ai/api/trpc/generate.generateExcuse?batch=1`, {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    method: 'POST',
+    body: JSON.stringify({
+      "0": {
+        "json": {
+          "messup": req.query.excuse,
+          "request": "",
+          "professionalism": 100,
+          "target": req.query.target
+        }
+      }
+    })
+
+  })
+  const result = await data.json()
+  console.log(result)
+
+  res.status(200).json(result)
 }
